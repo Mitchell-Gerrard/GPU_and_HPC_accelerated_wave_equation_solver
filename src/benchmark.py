@@ -65,6 +65,7 @@ def try_load_solvers():
             print('GPU solver not available:', e)
 
     # OpenCL
+    print(platforms[0].name.lower().find('amd'), platforms[0].name)
     if platforms[0].name.lower().find('amd') != -1:
         ocl_path = os.path.join(SRC_DIR, 'wave_opencl.py')
         try:
@@ -76,7 +77,18 @@ def try_load_solvers():
                 print('Loaded OpenCL solver')
         except Exception as e:
             print('OpenCL solver not available:', e)
-
+    # MPI
+    mpi_path = os.path.join(SRC_DIR, 'wave_mpi.py')
+    try:
+        mpi_mod = load_module_from_path('wave_mpi', mpi_path)
+        WaveMPI = getattr(mpi_mod, 'WaveSolver2D_MPI', None)
+        make_pulse_mpi = getattr(mpi_mod, 'create_gaussian_pulse_mpi', None)
+        if WaveMPI and make_pulse_mpi:
+            solvers['mpi'] = (WaveMPI, make_pulse_mpi)
+            print('Loaded MPI solver')
+    except Exception as e:
+        print('MPI solver not available:', e)
+    print(solvers)
     return solvers
 
 
@@ -111,7 +123,7 @@ def benchmark_solver(constructor, make_pulse, nx, ny, dt, dx, dy, c, n_steps, re
 def main():
     # Configuration (set values here instead of using command-line arguments)
     # Edit these variables when running from the IDE / interactive session.
-    sizes = np.arange(100, 2001, 100)  # list of nx (and ny) grid sizes to benchmark
+    sizes = np.arange(100, 5001, 100)  # list of nx (and ny) grid sizes to benchmark
     n_steps = 100               # number of timesteps per benchmark
     repeats = 3                 # repeats per (backend, size)
     results_dir = os.path.join(REPO_ROOT, 'results')
@@ -120,6 +132,9 @@ def main():
     if not solvers:
         print('No solvers available to benchmark. Exiting.')
         return
+    if 'mpi' in solvers:
+        print('Skipping MPI benchmark (results will be printed from different benchmark)')
+        del solvers['mpi']
  
     os.makedirs(results_dir, exist_ok=True)
     header = ['backend', 'nx', 'ny', 'n_steps', 'repeats', 'total_time_s', 'time_per_step_s', 'gridpoints_per_sec']
