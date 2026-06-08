@@ -1,0 +1,20 @@
+# Core numerical
+numpy
+scipy
+matplotlib
+ 
+# OpenCL (AMD GPU)
+pyopencl
+ 
+# MPI
+mpi4py
+ 
+# Colormaps
+cmasher
+ 
+# ML surrogate 
+torch
+ 
+# Optional: CuPy for NVIDIA GPU (uncomment if needed)
+#cupy-cuda12x
+ 
