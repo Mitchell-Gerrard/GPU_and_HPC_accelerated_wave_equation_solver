@@ -1,4 +1,3 @@
-
 """
 MPI-only benchmark for WaveSolver2D_MPI.
  
@@ -19,7 +18,8 @@ import time
 import importlib.util
 import numpy as np
 from mpi4py import MPI
- 
+import argparse
+
 # ---------------------------------------------------------------------------
 # MPI setup
 # ---------------------------------------------------------------------------
@@ -127,6 +127,11 @@ def benchmark_one(WaveSolver, make_pulse, nx, ny, dx, dy, dt, c, n_steps, sigma_
 # Main
 # ---------------------------------------------------------------------------
 def main():
+    # Parse rank label from command line
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--ranks', type=int, default=None)
+    args, _ = parser.parse_known_args()
+
     # Load config
     script_dir  = os.path.dirname(os.path.abspath(__file__))
     config_path = os.path.join(script_dir, 'benchmark_mpi_config.txt')
@@ -163,7 +168,7 @@ def main():
     # CSV setup (rank 0 only)
     if rank == 0:
         os.makedirs(cfg['results_dir'], exist_ok=True)
-        out_path = os.path.join(cfg['results_dir'], 'benchmark_mpi.csv')
+        out_path = os.path.join(cfg['results_dir'], f'benchmark_mpi_{args.ranks or size}ranks.csv')
         csvfile  = open(out_path, 'w', newline='')
         writer   = csv.writer(csvfile)
         header   = ['backend', 'nx', 'ny', 'n_steps', 'repeats',
