@@ -1,6 +1,5 @@
 # 2D Wave Equation: CPU, MPI, GPU and Surrogate Model Performance
-[![Language](https://shields.io)](https://github.com/Mitchell-Gerrard/GPU_and_HPC_accelerated_wave_equation_solver)
-## Overview
+
 
 This project implements and benchmarks a numerical simulation of the **two-dimensional wave equation with a Gaussian initial pulse**.
 
