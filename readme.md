@@ -7,16 +7,8 @@ The simulation models how a disturbance propagates through a 2D medium over time
 
 The wave equation used is
 
-$$
-\frac{\partial^2 u}{\partial t^2}
-=
-c^2
-\left(
-\frac{\partial^2 u}{\partial x^2}
-+
-\frac{\partial^2 u}{\partial y^2}
-\right),
-$$
+$$\frac{\partial^2 u}{\partial t^2}=c^2\left(\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}
+\right)$$
 
 where $u(x,y,t)$ represents the wave displacement and $c$ is the wave propagation speed.
 
