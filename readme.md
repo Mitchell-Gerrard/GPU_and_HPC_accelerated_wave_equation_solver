@@ -1,5 +1,5 @@
 # 2D Wave Equation: CPU, MPI, GPU and Surrogate Model Performance
-
+[![Language](https://shields.io)](https://github.com/Mitchell-Gerrard/GPU_and_HPC_accelerated_wave_equation_solver)
 ## Overview
 
 This project implements and benchmarks a numerical simulation of the **two-dimensional wave equation with a Gaussian initial pulse**.
@@ -21,9 +21,9 @@ $$
 
 where $u(x,y,t)$ represents the wave displacement and $c$ is the wave propagation speed.
 
-The equation is solved numerically using a **finite-difference method** (FDM). The continuous spatial domain is represented by a grid in $\mathbb{R}^2$, and the simulation advances the solution forward one timestep at a time.
+The equation is solved numerically using a **finite-difference method** (FDM). The continuous spatial domain is represented by a grid in $\mathbb{R}^2$, and the simulation advances the solution forward one time step at a time.
 
-At each timestep, the value at each interior grid point is calculated from its neighbouring points using the standard grid based FDM method:
+At each time step, the value at each interior grid point is calculated from its neighbouring points using the standard grid based FDM method:
 
 ```text
           u(i-1,j)
@@ -45,13 +45,13 @@ The resulting simulation produces a wave propagating outward and dissipating in 
 
 The simplistic nature of this toy simulation is deliberate, meaning we can focus on the parallelisation and the improvements it can bring.
 
-For a grid containing $N_x \times N_y$ points, every timestep requires updating approximately $N_xN_y$ points. A simulation with thousands of timesteps therefore requires billions of individual grid-point updates.
+For a grid containing $N_x \times N_y$ points, every time step requires updating approximately $N_xN_y$ points. A simulation with thousands of time steps therefore requires billions of individual grid-point updates.
 
 This raises a practical computational question:
 
 > **When does the simplicity of a conventional CPU implementation stop being worth the runtime, and when does it become worthwhile to introduce parallel computing (Probably the amount of time it takes to have a cup of tea)?**
 
-This project investigates that question by implementing the same numerical calculation using three approaches:
+This project investigates that question by implementing the same numerical calculation using four approaches:
 
 * **NumPy CPU** — straightforward vectorised implementation using libraries everyone knows
 * **MPI CPU** — using hundreds of CPU cores on a high performance computer via MPI communication
@@ -66,7 +66,7 @@ The goal is not to claim that one architecture is universally faster or better, 
 
 The solver numerically integrates the 2D wave equation using a finite-difference method.
 
-The computational workload increases rapidly with grid size because each timestep updates every point in the 2D domain.
+The computational workload increases rapidly with grid size because each time step updates every point in the 2D domain.
 
 The implementations considered are:
 
@@ -91,7 +91,7 @@ It is intentionally not treated as a highly optimised CPU implementation. Its pu
 
 The MPI implementation divides the spatial domain between processes.
 
-Each process owns a section of the grid and exchanges boundary rows with neighbouring processes after each timestep.
+Each process owns a section of the grid and exchanges boundary rows with neighbouring processes after each time step.
 
 This introduces additional complexity through:
 
@@ -123,7 +123,7 @@ This approach can be made more simple if you have an Nvidia GPU with CuPy, but A
 
 A second approach to reducing the computational cost is to use a machine-learning surrogate model.
 
-Rather than predicting the full $x,y,t$ wavefield, the surrogate is trained to predict **scalar summary quantities** describing the result of a simulation.
+Rather than predicting the full $x,y,t$ wave, the surrogate is trained to predict **scalar summary quantities** describing the result of a simulation.
 
 The model takes four parameters describing the initial conditions and wave propagation:
 
@@ -198,16 +198,16 @@ $$
 
 This measures the absolute computational throughput of each implementation.
 
-### Speedup
+### Speed up
 
-Speedup is measured relative to the NumPy CPU implementation:
+Speed up is measured relative to the NumPy CPU implementation:
 
 $$
 S =
 \frac{T_{\text{CPU}}}{T_{\text{implementation}}}
 $$
 
-A speedup of 10 therefore means that the parallel implementation completed the benchmark in approximately one tenth of the CPU baseline runtime.
+A speed up of 10 therefore means that the parallel implementation completed the benchmark in approximately one tenth of the CPU baseline runtime.
 
 ---
 
@@ -221,25 +221,25 @@ The grid-points-per-second results show how computational throughput changes as 
 
 The CPU implementation initially benefits from increasing workload size but eventually approaches a relatively stable throughput. This is consistent with the memory-intensive nature of the finite-difference problem.
 
-The parallel implementations behave differently because the computational workload is distributed across multiple processing elements with the MPI method increasing significantly until it tapers off near 2200 gridpoints whilst still slowly increasing. We have reached a limitation of the MPI throughput.
+The parallel implementations behave differently because the computational workload is distributed across multiple processing elements with the MPI method increasing significantly until it tapers off near 2200 grid points whilst still slowly increasing. We have reached a limitation of the MPI throughput.
 
 The GPU method increases until tapering off similarly to the MPI method but appears, if the examined region was increased, the GPU method would have exceeded the MPI method significantly due to the reasonable difference near the 5000 grid size region.
 
 ---
 
-### Speedup
+### Speed up
 
 ![The multiplicative increase of the MPI and GPU method in comparison to the CPU with the maximum MPI speed up being 937.28 X increase and 887.53 X increase for OpenCL](results/benchmark_speedup_comparison.png)
-The maximum measured speedups relative to the NumPy CPU implementation were:
+The maximum measured speed ups relative to the NumPy CPU implementation were:
 
 * **MPI CPU:** $937.28\times$
 * **OpenCL GPU:** $887.53\times$
 
-These values represent the maximum measured speedup within the tested grid-size range and should therefore be interpreted specifically relative to the NumPy baseline and hardware used for this benchmark.
+These values represent the maximum measured speed up within the tested grid-size range and should therefore be interpreted specifically relative to the NumPy baseline and hardware used for this benchmark.
 
-The speedup results show an extreme performance improvement relative to the straightforward NumPy implementation.
+The speed up results show an extreme performance improvement relative to the straightforward NumPy implementation.
 
-For larger problems, the speedup tends to level off and can occasionally decrease slightly. This can occur even when the parallel implementation continues to process more grid points per second. This is because speedup is a **relative metric**. If both implementations become faster with increasing problem size, but the parallel implementation's throughput increases more slowly, the measured speedup can plateau or decrease.
+For larger problems, the speed up tends to level off and can occasionally decrease slightly. This can occur even when the parallel implementation continues to process more grid points per second. This is because speed up is a **relative metric**. If both implementations become faster with increasing problem size, but the parallel implementation's throughput increases more slowly, the measured speed up can plateau or decrease.
 
 Small fluctuations are also expected in real hardware measurements due to factors such as system load, memory contention and process scheduling.
 
@@ -253,9 +253,9 @@ With the GPU method we have more consistent results with a continuous increase w
 
 The ML surrogate was evaluated using the held-out validation data generated from the numerical simulations. The following plots compare the surrogate predictions against the corresponding quantities extracted from the numerical solver.
 
-Rather than predicting the full wavefield, the model predicts a set of scalar quantities that describe important properties of the simulation.
+Rather than predicting the full wave, the model predicts a set of scalar quantities that describe important properties of the simulation.
 
-#### Final Energy
+#### Final Energy 
 
 ![Surrogate model final energy prediction](results/surrogate_final_energy.png)
 
@@ -357,10 +357,10 @@ Important limitations include:
 * Communication, memory bandwidth and synchronisation can become important at different problem sizes.
 * The benchmark focuses on execution time and does not quantify development or maintenance time.
 * The ML surrogate is limited to the parameter range represented in its training data.
-* The surrogate predicts selected scalar outputs rather than the complete wavefield.
+* The surrogate predicts selected scalar outputs rather than the complete wave.
 * Surrogate accuracy depends on the quantity being predicted and the quality and coverage of the training data.
 
-Consequently, the measured speedups should be interpreted specifically as **speedup relative to this particular baseline implementation and hardware configuration**.
+Consequently, the measured speed ups should be interpreted specifically as **speed up relative to this particular baseline implementation and hardware configuration**.
 
 ---
 
@@ -372,9 +372,9 @@ The results show that increasing computational workload can change the engineeri
 
 The ML surrogate demonstrates a different strategy, where the cost of generating simulation data and training a model can potentially be exchanged for much cheaper inference when many similar predictions are required.
 
-The benchmark also highlights why both **absolute throughput and relative speedup** are useful metrics when evaluating parallel implementations.
+The benchmark also highlights why both **absolute throughput and relative speed up** are useful metrics when evaluating parallel implementations.
 
-The broader lesson is that parallel computing and surrogate modelling are not simply about achieving the largest possible speedup. They are about deciding when the computational savings are large enough to justify the additional engineering complexity.
+The broader lesson is that parallel computing and surrogate modelling are not simply about achieving the largest possible speed up. They are about deciding when the computational savings are large enough to justify the additional engineering complexity.
 
 ## Future Work
 
