@@ -212,31 +212,22 @@ def plot_parity(Y_true, Y_pred, out_dir):
     n_targets = len(OUTPUT_COLS)
     ncols = 3
     nrows = (n_targets + ncols - 1) // ncols
-    fig, axes = plt.subplots(nrows, ncols, figsize=(5*ncols, 4*nrows))
-    axes = axes.ravel()
-
-    for i, col in enumerate(OUTPUT_COLS):
-        ax = axes[i]
-        ax.scatter(Y_true[:, i], Y_pred[:, i], alpha=0.6, s=20)
+    for i, col in enumerate(OUTPUT_COLS):  
+        plt.scatter(Y_true[:, i], Y_pred[:, i], alpha=0.6, s=20)
         lo = min(Y_true[:, i].min(), Y_pred[:, i].min())
         hi = max(Y_true[:, i].max(), Y_pred[:, i].max())
-        ax.plot([lo, hi], [lo, hi], 'r--', linewidth=1)
+        plt.plot([lo, hi], [lo, hi], 'r--', linewidth=1)
         r2 = r2_score(Y_true[:, i:i+1], Y_pred[:, i:i+1])[0]
-        ax.set_title(f'{col}\nR²={r2:.3f}')
-        ax.set_xlabel('Actual')
-        ax.set_ylabel('Predicted')
-        ax.grid(True, linestyle='--', alpha=0.4)
+        plt.title(f'{col}\nR²={r2:.3f}')
+        plt.xlabel('Actual')
+        plt.ylabel('Predicted')
+        plt.grid(True, linestyle='--', alpha=0.4)
+        plt.savefig(os.path.join(out_dir, f'surrogate_parity_{col}.png'), dpi=150)
+        plt.close()
 
-    for j in range(i+1, len(axes)):
-        axes[j].set_visible(False)
 
-    fig.suptitle('Surrogate parity plots (validation set)', y=1.01)
-    fig.tight_layout()
-    path = os.path.join(out_dir, 'surrogate_parity.png')
-    fig.savefig(path, dpi=150, bbox_inches='tight')
-    plt.close(fig)
-    print(f"Saved {path}")
 
+  
 
 def plot_error_by_param(X_val_raw, Y_true, Y_pred, out_dir):
     """Relative error vs each input parameter — reveals where the surrogate struggles."""

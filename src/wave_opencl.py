@@ -178,7 +178,7 @@ class WaveSolver2D_OpenCL:
             # rotate
             self.u_prev, self.u_curr, self.u_next = self.u_curr, self.u_next, self.u_prev
 
-    def solve(self, n_steps: int, snapshot_interval: int = 1):
+    def solve(self, n_steps: int, snapshot_interval: int = 1000000):
         """Run n_steps and return a NumPy array of snapshots collected every snapshot_interval steps.
 
         Returns an array of shape (n_snapshots, nx, ny) dtype float32 on host.

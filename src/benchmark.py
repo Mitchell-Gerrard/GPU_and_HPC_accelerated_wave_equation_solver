@@ -109,7 +109,8 @@ def benchmark_solver(constructor, make_pulse, nx, ny, dt, dx, dy, c, n_steps, re
         # If solve exists with n_steps parameter, call it to capture backend behavior
         if hasattr(solver, 'solve'):
             # some implementations return snapshots; we ignore returned data
-            solver.solve(n_steps)
+            
+            solver.solve(n_steps)  # no snapshots — pure compute
         else:
             for _ in range(n_steps):
                 solver.step()
