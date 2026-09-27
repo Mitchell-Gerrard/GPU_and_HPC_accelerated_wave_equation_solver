@@ -248,7 +248,7 @@ Rather than predicting the full wave, the model predicts a set of scalar quantit
 
 #### Final Energy 
 
-![Surrogate model final energy prediction](results/surrogate_final_energy.png)
+![Surrogate model final energy prediction](results/surrogate_parity_final_energy.png)
 
 The final energy prediction shows how closely the surrogate reproduces the final energy calculated by the numerical simulation.
 
